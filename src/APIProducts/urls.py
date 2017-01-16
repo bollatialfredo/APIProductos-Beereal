@@ -4,7 +4,7 @@ from django.conf import settings
 from rest_framework.authtoken import views
 
 urlpatterns = [
-    url(r'^api/', include('productos.urls', namespace='productos')),
+    url(r'^api/', include('products.urls', namespace='products')),
     url(r'^admin/', admin.site.urls),
 ]
 
