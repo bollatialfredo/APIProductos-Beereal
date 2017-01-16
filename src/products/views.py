@@ -1,3 +1,10 @@
+from django.db.models import Q
+
+from rest_framework.filters import (
+    SearchFilter,
+    OrderingFilter
+)
+
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveAPIView,
@@ -5,35 +12,36 @@ from rest_framework.generics import (
     UpdateAPIView
     )
 
-from django.shortcuts import get_object_or_404
 from .serializers import ProductSerializer
-from .models import Product
+from .models import Product as ProductModel
 
 
 class ProductsList(ListCreateAPIView):
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['name']
 
-    def get_object(self):
-         queryset = self.get_queryset()
-         obj = get_object_or_404(
-            qs,
-            pk = self.kwargs['pk']
-         )
-
+    def get_queryset(self, *args, **kwargs):
+        queryset_list = ProductModel.objects.all()
+        query = self.request.GET.get('q')
+        if query:
+            queryset_list = queryset_list.filter(
+            Q(name__icontains = query)
+            ).distinct()
+        return queryset_list
 
 
 
 class ProductEdit(UpdateAPIView):
-    queryset = Product.objects.all()
+    queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
 
 
 class ProductDelete(DestroyAPIView):
-    queryset = Product.objects.all()
+    queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
 
 
-class Product(RetrieveAPIView): #si esto no esta al final no anda ?????
-    queryset = Product.objects.all()
+class Product(RetrieveAPIView):
+    queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
