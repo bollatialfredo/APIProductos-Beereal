@@ -19,7 +19,7 @@ from .models import Product as ProductModel
 class ProductsList(ListCreateAPIView):
     serializer_class = ProductSerializer
     filter_backends = [SearchFilter, OrderingFilter]
-    search_fields = ['name']
+    search_fields = ['name', 'condition']
 
     def get_queryset(self, *args, **kwargs):
         queryset_list = ProductModel.objects.all()
